@@ -1,11 +1,11 @@
-import pickle
 import pandas as pd
 from flask import Flask, request, jsonify, render_template
+import joblib
 
 app = Flask(__name__)
 
-# Load the model (Pipeline includes preprocessor and classifier)
-model = pickle.load(open('logistic_regression_model.pkl', 'rb'))
+model = joblib.load('logistic_regression_model.joblib')
+
 
 # Define expected features in the correct order
 feature_columns = [
