@@ -1,0 +1,5 @@
+flask==2.3.3
+scikit-learn==1.5.1
+pandas==2.2.1
+numpy==1.26.4  # Stable version compatible with Python 3.12
+gunicorn==22.0.0
