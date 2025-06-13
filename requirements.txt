@@ -1,5 +1,5 @@
 flask==2.3.3
-scikit-learn==1.5.1
-pandas==2.2.2
+scikit-learn==1.4.2  # Compatible with Python 3.12
+pandas==2.2.1       # Compatible with Python 3.12 and scikit-learn 1.4.2
 numpy==1.26.4
 gunicorn==22.0.0
