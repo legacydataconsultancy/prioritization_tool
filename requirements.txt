@@ -1,4 +1,5 @@
 flask
+flask-cors
 joblib==1.5.1
 scikit-learn==1.5.1
 pandas
