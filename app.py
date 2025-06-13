@@ -1,8 +1,10 @@
 import pandas as pd
 from flask import Flask, request, jsonify
+from flask_cors import CORS  # <-- added for CORS
 import joblib
 
 app = Flask(__name__)
+CORS(app)  # <-- enable CORS for all routes
 
 # Load trained model
 model = joblib.load('logistic_regression_model.joblib')
