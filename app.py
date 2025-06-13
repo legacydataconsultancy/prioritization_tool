@@ -1,32 +1,33 @@
 import pandas as pd
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify
 import joblib
 
 app = Flask(__name__)
 
+# Load trained model
 model = joblib.load('logistic_regression_model.joblib')
 
-
-# Define expected features in the correct order
+# Define expected features in correct order
 feature_columns = [
     'job_title', 'department', 'seniority_level', 'tags_1', 'tags_2',
     'city', 'country', 'industry', 'company_city', 'company_country',
-    'employee_count', 'annual_revenue_usd', 'founded_year', 'company_age', 'score', 'score_rating'
+    'employee_count', 'annual_revenue_usd', 'founded_year',
+    'company_age', 'score', 'score_rating'
 ]
 
 @app.route('/')
 def home():
-    return render_template('index.html')  # Web interface
+    return jsonify({'message': 'Prioritization Tool API is running'}), 200
 
 @app.route('/predict', methods=['POST'])
 def predict():
     try:
-        # Get JSON data with proper parsing
         data = request.get_json()
+
         if not data:
             return jsonify({'error': 'No JSON data provided'}), 400
-        
-        # Convert numeric fields to the correct types with fallback
+
+        # Parse and convert input data
         input_data = {
             'job_title': data.get('job_title', ''),
             'department': data.get('department', ''),
@@ -45,24 +46,24 @@ def predict():
             'score': float(data.get('score', 0)),
             'score_rating': data.get('score_rating', '')
         }
-        
-        # Create a DataFrame with the input data in the correct order
+
+        # Create DataFrame in expected format
         input_df = pd.DataFrame([input_data], columns=feature_columns)
-        
-        # Make prediction and get probability
+
+        # Make prediction
         prediction = model.predict(input_df)[0]
-        probability = model.predict_proba(input_df)[0][1]  # Probability of class 1 (Yes)
-        
-        # Return prediction, probability, and result as JSON
+        probability = model.predict_proba(input_df)[0][1]
+
         return jsonify({
             'prediction': int(prediction),
-            'probability': round(probability * 100, 2),  # Convert to percentage and round to 2 decimals
+            'probability': round(probability * 100, 2),
             'result': 'Yes' if prediction == 1 else 'No'
         })
+
     except ValueError as e:
-        return jsonify({'error': f'Invalid numeric data: {str(e)}'}), 400
+        return jsonify({'error': f'Invalid input data: {str(e)}'}), 400
     except Exception as e:
-        return jsonify({'error': str(e)}), 400
+        return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
